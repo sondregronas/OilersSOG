@@ -1,0 +1,76 @@
+<html>
+<head>
+    <title>Oilers SOG</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/icons/maskable_icon_x48.png">
+    <link rel="manifest" href="/static/manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/static/sw.js');
+            });
+        }
+    </script>
+    <script src="static/jquery.js"></script>
+    <script src="static/sio.js"></script>
+</head>
+
+<body>
+<div class="tally-container">
+    <div class="tally tally-home">
+        <div class="tally-count">0</div>
+        <div class="tally-buttons">
+            <button class="tally-button add" id="add-home">+</button>
+            <button class="tally-button remove" id="remove-home">-</button>
+        </div>
+    </div>
+
+    <div class="tally tally-away">
+        <div class="tally-count">0</div>
+        <div class="tally-buttons">
+            <button class="tally-button add" id="add-away">+</button>
+            <button class="tally-button remove" id="remove-away">-</button>
+        </div>
+    </div>
+
+    <div class="info">
+        Oppdater skuddstatistikk på kuben, dersom Wisehockey er nede (for telling)
+    </div>
+
+    <div class="reset-tally">
+        <button class="reset-tally-button" id="reset-tally">&#8634;</button>
+    </div>
+</div>
+
+<script>
+    const sio = io.connect("http://localhost:5000");
+
+    sio.on("tally", function (data) {
+        $(".tally-home .tally-count").html(data.homeTeamStatistics.totalStatistics.shotStatistics.shotsOnGoal);
+        $(".tally-away .tally-count").html(data.awayTeamStatistics.totalStatistics.shotStatistics.shotsOnGoal);
+    });
+
+    $("#add-home").click(function () {
+        sio.emit("add", {team: "homeTeamStatistics"});
+    });
+
+    $("#add-away").click(function () {
+        sio.emit("add", {team: "awayTeamStatistics"});
+    });
+
+    $("#remove-home").click(function () {
+        sio.emit("remove", {team: "homeTeamStatistics"});
+    });
+
+    $("#remove-away").click(function () {
+        sio.emit("remove", {team: "awayTeamStatistics"});
+    });
+
+    $(".reset-tally").click(function () {
+        if (confirm("Reset SOG?")) {
+            sio.emit("reset");
+        }
+    });
+</script>
+</body>
+</html>
