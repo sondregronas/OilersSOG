@@ -4,6 +4,7 @@
     color: white;
     font-family: 'Roboto', sans-serif;
     text-shadow: 0 0 .3rem black, 0 0 .3rem black, 0 0 .3rem black, 0 0 .3rem black;
+    touch-action: manipulation;
 }
 
 body {
