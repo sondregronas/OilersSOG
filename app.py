@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO
 
+import os
+
 app = Flask(__name__)
 sio = SocketIO(app, cors_allowed_origins='*')
 
@@ -62,4 +64,10 @@ def reset():
 
 
 if __name__ == '__main__':
+    host = os.environ['HOST'] or 'http://localhost:5000'
+    data = open('templates/index.html', 'r').read()
+    data = data.replace('http://localhost:5000', host)
+    with open('templates/index.html', 'w') as file:
+        file.write(data)
+
     sio.run(app, host='0.0.0.0', allow_unsafe_werkzeug=True)

@@ -4,3 +4,6 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"
+    environment:
+      - HOST=http://localhost:5000
+      - WEB_CONCURRENCY=8
