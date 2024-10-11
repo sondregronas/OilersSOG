@@ -41,6 +41,31 @@ def api():
     return jsonify(tally)
 
 
+@app.route("/api/<team>")
+def api_team(team):
+    if team.lower() not in ["home", "away"]:
+        return jsonify({"error": "Invalid team"})
+    if team.lower() == "home":
+        team = "homeTeamStatistics"
+    else:
+        team = "awayTeamStatistics"
+    return jsonify(tally[team]["totalStatistics"]["shotStatistics"]["shotsOnGoal"])
+
+
+@app.route("/api/<add_or_remove>/<team>")
+def add_api(add_or_remove, team):
+    if add_or_remove.lower() not in ["add", "remove"]:
+        return jsonify({"error": "Invalid operation"})
+    if team.lower() not in ["home", "away"]:
+        return jsonify({"error": "Invalid team"})
+    if team.lower() == "home":
+        team = "homeTeamStatistics"
+    else:
+        team = "awayTeamStatistics"
+    modify_tally(team, 1 if add_or_remove.lower() == "add" else -1)
+    return jsonify(tally[team]["totalStatistics"]["shotStatistics"]["shotsOnGoal"])
+
+
 @sio.on("connect")
 def connect():
     sio.emit("tally", tally)
